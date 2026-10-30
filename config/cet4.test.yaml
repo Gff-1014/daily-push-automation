@@ -1,0 +1,11 @@
+cet4:
+  words_file: data/cet4/words.json
+  state_file: data/cet4/state.test.json
+  output_dir: data/cet4/output-test
+  cos:
+    bucket: ""                 # 测试用，可用环境变量 COS_BUCKET 覆盖
+    region: ap-guangzhou
+    key: cet4/state.test.json
+  listening:
+    enabled: false
+    proxy_base_url: ""         # 媒体代理 URL（环境变量 MEDIA_PROXY_BASE_URL）

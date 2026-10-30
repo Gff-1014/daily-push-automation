@@ -1,0 +1,15 @@
+[project]
+name = "news-summary"
+version = "0.1.0"
+description = "每日央视网新闻文字总结系统（腾讯云 SCF 云端版）"
+requires-python = ">=3.9"
+dependencies = [
+    "requests==2.32.3",
+    "beautifulsoup4>=4.12",
+    "soupsieve==2.5",
+    "PyYAML>=6.0",
+    "urllib3>=1.26,<2",
+]
+
+[tool.uv]
+package = false

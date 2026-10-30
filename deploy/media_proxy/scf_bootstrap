@@ -1,0 +1,2 @@
+#!/bin/bash
+cd /var/user && python3 server.py

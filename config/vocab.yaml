@@ -1,0 +1,52 @@
+# 六级单词推送系统 - 独立配置
+vocab:
+  words_file: data/vocab/words.json
+  state_file: data/vocab/state.json
+  output_dir: data/vocab/output
+
+  # 学习周期：未设考试日期时按固定天数；设置 end_date 后自动倒排
+  plan_days: 100
+  end_date: ""            # 例：2026-12-12（设置后 = 考试日 - 开始日 - 冲刺期）
+  final_review_days: 14   # 冲刺期：考前最后 N 天只复习不推新词
+
+  # 每日新词分配
+  morning_ratio: 0.5      # 早间占比（晚间 = 1 - morning_ratio）
+
+  # SRS 间隔（天）：0 = 当天晚间回测
+  srs_intervals: [0, 1, 2, 4, 7, 15, 30]
+  review_per_push_max: 25 # 每次推送复习词上限
+
+  reading:
+    enabled: true
+    max_words: 300          # 改写后英文短文目标词数
+    article_chars: 3000     # 抓取正文参与改写的最大字符数
+    morning_sources: [npr_science, sciencedaily, npr_tech]
+    evening_sources: [cgtn_world, chinadaily_china, cgtn_china, chinadaily_world]
+    feeds:
+      npr_world: https://feeds.npr.org/1004/rss.xml
+      npr_science: https://feeds.npr.org/1007/rss.xml
+      npr_tech: https://feeds.npr.org/1018/rss.xml
+      npr_business: https://feeds.npr.org/1019/rss.xml
+      sciencedaily: https://www.sciencedaily.com/rss/all.xml
+      cgtn_world: https://www.cgtn.com/subscribe/rss/section/world.xml
+      cgtn_china: https://www.cgtn.com/subscribe/rss/section/china.xml
+      chinadaily_world: http://www.chinadaily.com.cn/rss/world_rss.xml
+      chinadaily_china: http://www.chinadaily.com.cn/rss/china_rss.xml
+
+  # 邮件推送：webhook_url 留空则走 SMTP；SMTP 凭据只读复用 .env（SMTP_USER/SMTP_AUTH_CODE/MAIL_TO）
+  email:
+    enabled: true
+    webhook_url: ""          # 可选：自动邮件 HTTP 触发器
+    smtp_host: smtp.qq.com
+    smtp_port: 465
+    timeout: 30
+    retries: 3
+    alert_after_failures: 3
+
+  # 状态云端持久化（SCF 运行时用；同桶不同 key，不影响新闻系统）
+  cos:
+    bucket: ""              # 本地默认仅落盘；部署脚本会自动注入云端桶
+    region: ap-guangzhou
+    key: vocab/state.json
+
+  timezone: Asia/Shanghai

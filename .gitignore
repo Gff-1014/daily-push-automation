@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.pyc
+data/
+logs/
+*.zip
+*.log
+deploy/package/
+deploy/package_*/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

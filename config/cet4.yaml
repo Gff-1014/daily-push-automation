@@ -1,0 +1,86 @@
+cet4:
+  words_file: data/cet4/words.json
+  state_file: data/cet4/state.json
+  output_dir: data/cet4/output
+  plan_days: 100
+  end_date: '2026-12-12'
+  final_review_days: 1     # 新词推到考前最后一天（12-11），每天配额按剩余天数均摊
+  morning_ratio: 0.5
+  srs_intervals:
+  - 0
+  - 1
+  - 2
+  - 4
+  - 7
+  - 15
+  - 30
+  review_per_push_max: 20
+  review_target_min: 15
+  review_exclude_groups:
+  - 基础词
+  - 基础补强
+  http:
+    user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+    timeout: 15
+  llm:
+    base_url: https://api.deepseek.com/v1
+    model: deepseek-v4-flash
+    temperature: 0.2
+    timeout: 120
+    max_retries: 2
+    json_mode: true
+  listening:
+    enabled: false
+    max_chars: 3000
+    cos_key_prefix: cet4/listening/
+    cos_bucket: ""             # 由环境变量 CET4_MEDIA_BUCKET 注入
+    cos_region: ap-guangzhou
+    url_expire_days: 180
+    speeds:
+    - 1.25
+    - 1.0
+    - 0.75
+    excerpt_min: 30
+    excerpt_max: 45
+    attach_mp3: false
+    sources:
+      tingroom_voa: http://www.tingroom.com/voa/
+    proxy_base_url: ""         # 由环境变量 MEDIA_PROXY_BASE_URL 注入（媒体代理函数 URL）
+  cne:
+    enabled: true
+  reading:
+    enabled: true
+    max_words: 220
+    article_chars: 3000
+    morning_sources:
+    - npr_science
+    - sciencedaily
+    - npr_tech
+    evening_sources:
+    - cgtn_world
+    - npr_world
+    - cgtn_china
+    - npr_business
+    feeds:
+      npr_world: https://feeds.npr.org/1004/rss.xml
+      npr_science: https://feeds.npr.org/1007/rss.xml
+      npr_tech: https://feeds.npr.org/1018/rss.xml
+      npr_business: https://feeds.npr.org/1019/rss.xml
+      sciencedaily: https://www.sciencedaily.com/rss/all.xml
+      cgtn_world: https://www.cgtn.com/subscribe/rss/section/world.xml
+      cgtn_china: https://www.cgtn.com/subscribe/rss/section/china.xml
+      chinadaily_world: http://www.chinadaily.com.cn/rss/world_rss.xml
+      chinadaily_china: http://www.chinadaily.com.cn/rss/china_rss.xml
+  email:
+    enabled: true
+    webhook_url: ''
+    smtp_host: smtp.qq.com
+    smtp_port: 465
+    timeout: 30
+    retries: 3
+    alert_after_failures: 3
+  cos:
+    bucket: ''
+    region: ap-guangzhou
+    key: cet4/state.json
+  timezone: Asia/Shanghai

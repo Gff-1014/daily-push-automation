@@ -1,0 +1,157 @@
+# 每日央视网新闻文字总结系统 - 主配置
+app:
+  name: 央视网新闻文字总结
+  timezone: Asia/Shanghai
+
+slots:
+  morning:
+    run_time: "08:30"
+    push_time: "09:00"
+    window_start: "20:30"      # 前一天运行时刻（上一次晚间运行）
+    window_prev_day: true
+    foreign_sources: true
+    skip_xwlb_duplicates: true
+    xwlb: false
+    cwtx: true
+    thresholds:
+      政治: 55
+      经济: 55
+      科技: 55
+      国际: 55
+      生活: 65
+      社会: 65
+      次类: 65
+      杂类: 65
+  evening:
+    run_time: "20:30"
+    push_time: "21:00"
+    window_start: "08:30"      # 当天早间运行时刻
+    window_prev_day: false
+    foreign_sources: false
+    xwlb: true
+    cwtx: false
+    thresholds:
+      政治: 55
+      经济: 55
+      科技: 55
+      国际: 55
+      生活: 55
+      社会: 55
+      次类: 55
+      杂类: 55
+
+caps:
+  政治: 10
+  经济: 10
+  科技: 10
+  生活: 10
+  国际: 10
+  社会: 10
+  次类: 15
+  杂类: 10
+
+scoring:
+  w_llm: 0.60
+  w_heat: 0.25
+  w_keyword: 0.15
+  full_score: 100
+  source_bonus:
+    央视网·朝闻天下: 8
+    央视网·新闻联播: 8
+  heat_fallback_weights:
+    w_llm: 0.80
+    w_keyword: 0.20
+
+llm:
+  base_url: https://api.deepseek.com
+  model: deepseek-v4-flash
+  temperature: 0.2
+  timeout: 120
+  max_retries: 2
+  input_chars: 500
+  batch_size: 30
+  parallel: 3
+  json_mode: true
+
+heat:
+  provider: juhe            # juhe | direct
+  juhe_url: https://apis.juhe.cn/fapigx/networkhot/query
+  platforms: [微博, 百度, 抖音, B站]
+  weights:
+    微博: 25
+    百度: 25
+    抖音: 25
+    B站: 25
+    全网: 100
+  min_match_platforms: 1
+
+keyword:
+  file: config/keywords.json
+  cap: 30
+  match_chars: 500          # 正文参与关键词匹配的前 N 字
+
+collector:
+  timeout: 15
+  retries: 3
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+  max_items_per_channel: 80
+  cctv:
+    base: https://news.cctv.com/2019/07/gaiban/cmsdatainterface/page/
+    channels:
+      china: [政治]
+      law: [政治]
+      economy: [经济]
+      tech: [科技]
+      world: [国际]
+      life: [生活]
+      health: [生活]
+      society: [社会]
+      ent: [次类]
+      edu: [次类]
+    military_url: https://military.cctv.com/data/index.json
+    military_category: 次类
+  cls:
+    telegraph_url: https://www.cls.cn/api/cache
+    depth_url: https://api3.cls.cn/v3/depth/home/assembled/1000
+    app: CailianpressWeb
+    os: web
+    sv: "8.7.9"
+    telegraph_levels: [A, B]     # 重要快讯标记
+    keep_flags: [is_top]
+    categories: [政治, 经济, 科技]   # 财联社仅作这三类补充
+  xwlb:
+    enabled: true
+  cwtx:
+    enabled: true
+    column_id: TOPC1451558496100826
+  foreign:
+    xinhua_world: http://www.news.cn/world/
+    huanqiu_world: https://world.huanqiu.com/
+    cankao_channels:
+      - {name: 国际, alias: gj}
+      - {name: 科技, alias: kejiyy}
+      - {name: 军事, alias: junshi}
+      - {name: 中国, alias: zhongguo}
+
+output:
+  dir: data/output
+  speed_count: 10
+  include_links: true
+
+email:
+  webhook_url: ""            # 阶段4：自动邮件 HTTP 触发器 URL
+  smtp_host: smtp.qq.com     # 由环境变量 SMTP_HOST 覆盖
+  smtp_port: 465             # 由环境变量 SMTP_PORT 覆盖
+  timeout: 30
+  retries: 3
+  alert_after_failures: 3
+
+state:
+  local_file: data/state.json
+  cos_bucket: ""             # 由环境变量 COS_BUCKET 注入（.env / 云函数环境变量）
+  cos_region: "ap-guangzhou" # 由环境变量 COS_REGION 覆盖
+  fingerprint_days: 10
+
+dedup:
+  use_llm_review: true
+  fuzzy_min_similarity: 0.72
